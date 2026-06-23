@@ -9,7 +9,7 @@
     "allowJs": true,
     "rootDir": ".",
     "types": [
-      "node"
+      "bun"
     ],
 
     // Bundler mode
