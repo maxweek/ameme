@@ -1,37 +1,113 @@
-import { GraphitiService, type AddEpisodeResult } from '../services/graphiti';
+import { extractFromText } from '../services/graph/extraction';
+import { findDuplicate } from '../services/graph/dedup';
+import { writeEdgeWithTemporal } from '../services/graph/temporal';
+import { GraphClient } from '../services/graph/client';
+import { EmbeddingService } from '../services/embeddings';
 import { RedisService } from '../services/redis';
+import type { WriteResult } from '../services/graph/types';
+import { CONFIG } from '../config';
 
-export interface RememberResult {
-  status: 'ok' | 'error';
-  entityCount: number;
-  relationCount: number;
-  error?: string;
-}
-
-export async function remember(fact: string, source = 'agent_remember'): Promise<RememberResult> {
-  if (!fact || fact.length < 10) {
-    return { status: 'error', entityCount: 0, relationCount: 0, error: 'Fact too short (min 10 chars)' };
+export async function remember(text: string, source = 'agent_remember'): Promise<WriteResult> {
+  if (!text || text.length < 10) {
+    return { ok: false, nodesCreated: 0, nodesUpdated: 0, edgesCreated: 0, edgesInvalidated: 0, error: 'Text too short (min 10 chars)' };
   }
 
-  if (fact.length > 2000) {
-    fact = fact.slice(0, 2000);
+  if (text.length > 2000) {
+    text = text.slice(0, 2000);
   }
+
+  const groupId = CONFIG.falkordb.database;
+  let nodesCreated = 0;
+  let nodesUpdated = 0;
+  let edgesCreated = 0;
+  let edgesInvalidated = 0;
 
   try {
-    // 1. Записать в Graphiti (dedup + conflict resolution — внутри)
-    const result = await GraphitiService.addEpisode(fact, source);
+    // 1. LLM extraction with graph context
+    const extracted = await extractFromText(text, groupId);
 
-    // 2. Инвалидировать core memory block — следующий startup пересоберёт
+    console.log('[remember] extraction:', JSON.stringify({
+      entities: extracted.entities.map(e => e.name),
+      relations: extracted.relations.map(r => `${r.sourceName}→${r.name}→${r.targetName}`),
+      invalidated: extracted.invalidated.map(i => `${i.sourceName}→${i.name}→${i.targetName}: ${i.reason}`),
+    }, null, 2));
+
+    if (extracted.entities.length === 0) {
+      return { ok: true, nodesCreated: 0, nodesUpdated: 0, edgesCreated: 0, edgesInvalidated: 0 };
+    }
+
+    // 2. Upsert entities
+    const nameToUuid = new Map<string, string>();
+
+    for (const entity of extracted.entities) {
+      const dup = await findDuplicate(entity, groupId);
+
+      if (dup) {
+        // Existing node — replace summary (not append)
+        await GraphClient.updateNodeSummary(dup.existing.uuid, entity.summary);
+        nameToUuid.set(entity.name, dup.existing.uuid);
+        nodesUpdated++;
+      } else {
+        // New node
+        const uuid = await GraphClient.createNode({
+          name: entity.name,
+          type: entity.type,
+          summary: entity.summary,
+          groupId,
+        });
+
+        const embedding = await EmbeddingService.embedPassage(`${entity.name}: ${entity.summary}`);
+        await GraphClient.setNodeEmbedding(uuid, embedding);
+
+        nameToUuid.set(entity.name, uuid);
+        nodesCreated++;
+      }
+    }
+
+    // 3. Write edges with temporal logic
+    for (const relation of extracted.relations) {
+      const sourceUuid = nameToUuid.get(relation.sourceName)
+        ?? (await GraphClient.findNodeByName(relation.sourceName, groupId))?.uuid;
+      const targetUuid = nameToUuid.get(relation.targetName)
+        ?? (await GraphClient.findNodeByName(relation.targetName, groupId))?.uuid;
+      if (!sourceUuid || !targetUuid) continue;
+
+      const result = await writeEdgeWithTemporal(relation, sourceUuid, targetUuid, groupId);
+
+      if (result.action === 'created' || result.action === 'updated') {
+        const embedding = await EmbeddingService.embedPassage(relation.fact);
+        await GraphClient.setEdgeEmbedding(result.edgeUuid, embedding);
+        edgesCreated++;
+      }
+
+      edgesInvalidated += result.invalidated.length;
+    }
+
+    // 4. Invalidate old facts by LLM instruction
+    for (const inv of extracted.invalidated) {
+      const srcUuid = nameToUuid.get(inv.sourceName)
+        ?? (await GraphClient.findNodeByName(inv.sourceName, groupId))?.uuid;
+      const tgtUuid = nameToUuid.get(inv.targetName)
+        ?? (await GraphClient.findNodeByName(inv.targetName, groupId))?.uuid;
+
+      if (!srcUuid || !tgtUuid) continue;
+
+      const existing = await GraphClient.findEdgesByNodes(srcUuid, tgtUuid, groupId);
+      for (const edge of existing) {
+        if (edge.name === inv.name) {
+          await GraphClient.invalidateEdge(edge.uuid);
+          edgesInvalidated++;
+        }
+      }
+    }
+
+    // 5. Invalidate startup cache
     await RedisService.del('judy:core_memory_block');
 
-    return {
-      status: 'ok',
-      entityCount: result.entityCount,
-      relationCount: result.relationCount,
-    };
+    return { ok: true, nodesCreated, nodesUpdated, edgesCreated, edgesInvalidated };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error(`[remember] failed:`, message);
-    return { status: 'error', entityCount: 0, relationCount: 0, error: message };
+    console.error('[remember] failed:', message);
+    return { ok: false, nodesCreated, nodesUpdated, edgesCreated, edgesInvalidated, error: message };
   }
 }

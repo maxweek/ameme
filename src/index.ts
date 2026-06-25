@@ -10,12 +10,14 @@ import { startup } from "./primitives/startup";
 import { PgService } from "./services/postgres";
 import { GraphitiService } from "./services/graphiti";
 import { log } from "./primitives/log";
+import { ensureGraphSchema, GraphClient } from "./services/graph";
 
 const server = new FastMCP({
   name: "demo",
   version: "1.0.0",
 
 });
+
 
 
 
@@ -32,18 +34,18 @@ server.addTool({
   }),
   execute: async ({ query, limit }) => {
     const results = await search(query, limit);
-    if (results.length === 0) return 'Ничего не найдено.';
+    if (results.length === 0) return 'Ничего не найдено в памяти.';
 
     return results
       .map((r, i) => {
         const icon = r.source === 'fact' ? '📊' : '💬';
         const time = r.timestamp ? ` [${r.timestamp}]` : '';
-        return `${i + 1}. ${icon} ${r.content}${time}`;
+        const score = ` (${(r.score * 100).toFixed(0)}%)`;
+        return `${i + 1}. ${icon} ${r.content}${time}${score}`;
       })
       .join('\n');
   },
 });
-
 
 server.addTool({
   name: 'memory_remember',
@@ -53,21 +55,32 @@ server.addTool({
 - принято важное техническое решение
 НЕ запоминай: эмоции момента, временные конфиги, то что уже известно.`,
   parameters: z.object({
-    fact: z.string().describe('Факт для запоминания — естественным языком'),
+    fact: z.string().describe('Факт для запоминания — естественным языком, подробно'),
   }),
   execute: async ({ fact }) => {
     const result = await remember(fact);
-    if (result.status === 'error') return `Ошибка: ${result.error}`;
-    return `Запомнила. Entities: ${result.entityCount}, relations: ${result.relationCount}`;
+    if (!result.ok) return `Ошибка: ${result.error}`;
+
+    const parts = [];
+    if (result.nodesCreated) parts.push(`узлов создано: ${result.nodesCreated}`);
+    if (result.nodesUpdated) parts.push(`узлов обновлено: ${result.nodesUpdated}`);
+    if (result.edgesCreated) parts.push(`связей создано: ${result.edgesCreated}`);
+    if (result.edgesInvalidated) parts.push(`фактов устарело: ${result.edgesInvalidated}`);
+
+    return parts.length > 0
+      ? `Запомнила. ${parts.join(', ')}.`
+      : 'Запомнила, но новых сущностей не извлечено.';
   },
 });
 
 server.addTool({
   name: 'memory_startup',
-  description: 'Получить контекст памяти. Вызывается автоматически при старте сессии.',
-  parameters: z.object({}),
-  execute: async () => {
-    return startup();
+  description: 'Получить контекст памяти. Вызывается при старте сессии.',
+  parameters: z.object({
+    userId: z.string().optional().describe('ID пользователя'),
+  }),
+  execute: async ({ userId }) => {
+    return startup({ userId });
   },
 });
 
@@ -88,6 +101,41 @@ server.addTool({
   },
 });
 
+server.addTool({
+  name: 'memory_graph',
+  description: 'Показать все узлы и связи в графе памяти. Для обзора, дебага и визуализации.',
+  parameters: z.object({
+    includeInvalid: z.boolean().optional().default(false).describe('Показать устаревшие факты'),
+  }),
+  execute: async ({ includeInvalid }) => {
+    const groupId = CONFIG.falkordb.database;
+
+    const [nodes, edges] = await Promise.all([
+      GraphClient.getAllNodes(groupId),
+      GraphClient.getAllEdges(groupId, !includeInvalid),
+    ]);
+
+    if (nodes.length === 0) return 'Граф пуст.';
+
+    const lines: string[] = [];
+
+    lines.push(`=== УЗЛЫ (${nodes.length}) ===`);
+    for (const node of nodes) {
+      lines.push(`• [${node.type}] ${node.name}: ${node.summary}`);
+    }
+
+    lines.push('');
+    lines.push(`=== СВЯЗИ (${edges.length}) ===`);
+    for (const edge of edges) {
+      const sourceName = nodes.find(n => n.uuid === edge.sourceUuid)?.name ?? edge.sourceUuid;
+      const targetName = nodes.find(n => n.uuid === edge.targetUuid)?.name ?? edge.targetUuid;
+      const status = edge.invalidAt ? ' ❌' : '';
+      lines.push(`• ${sourceName} —[${edge.name}]→ ${targetName}: ${edge.fact}${status}`);
+    }
+
+    return lines.join('\n');
+  },
+});
 
 async function main() {
   console.log('[ameme] Initializing...');
@@ -96,9 +144,10 @@ async function main() {
   await PgService.initSchema();
   console.log('[ameme] Postgres schema ready');
 
-  // Graphiti connection
-  await GraphitiService.connect();
-  console.log('[ameme] Graphiti connected');
+
+  await GraphClient.connect();
+  await ensureGraphSchema();
+  console.log('[ameme] FalkorDB ready');
 
   // Start MCP server
   server.start({

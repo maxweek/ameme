@@ -1,10 +1,14 @@
-import { GraphitiService } from '../services/graphiti';
+import { GraphClient } from '../services/graph/client';
 import { PgService } from '../services/postgres';
 import { ObsidianService } from '../services/obsidian';
 import { RedisService } from '../services/redis';
+import { CONFIG } from '../config';
 
-const CACHE_KEY = 'judy:core_memory_block';
-const CACHE_TTL = 1800; // 30 минут
+const CACHE_TTL = 1800; // 30 min
+
+export interface StartupParams {
+  userId?: string;
+}
 
 export async function startup(params: StartupParams = {}): Promise<string> {
   const userId = params.userId ?? 'default';
@@ -13,57 +17,59 @@ export async function startup(params: StartupParams = {}): Promise<string> {
   const cached = await RedisService.get(cacheKey);
   if (cached) return cached;
 
-  // Целевые запросы, не мусорный "всё обо всём"
-  const [
-    userProfile,
-    userFacts,
-    activeProjects,
-    preferences,
-    recentMessages,
-  ] = await Promise.allSettled([
+  const groupId = CONFIG.falkordb.database;
+
+  const [userProfile, allNodes, allEdges, recentMessages] = await Promise.allSettled([
     ObsidianService.read(`пользователи/${userId}.md`),
-    GraphitiService.searchNodes(userId, 5),
-    GraphitiService.searchFacts('текущие проекты в работе', 5),
-    GraphitiService.searchFacts('предпочтения привычки принципы', 5),
+    GraphClient.getAllNodes(groupId),
+    GraphClient.getAllEdges(groupId, true),
     PgService.recentMessages(24),
   ]);
 
   const sections: string[] = [];
 
-  // Профиль из Obsidian
+  // User profile from Obsidian
   if (userProfile.status === 'fulfilled' && userProfile.value) {
     sections.push(truncate(userProfile.value, 500));
   }
 
-  // Факты о пользователе из графа
-  if (userFacts.status === 'fulfilled' && userFacts.value.length > 0) {
-    const lines = userFacts.value.map(n => `- ${n.name}: ${n.summary}`);
-    sections.push('Ключевые факты:\n' + lines.join('\n'));
+  // Graph nodes — group by type dynamically
+  if (allNodes.status === 'fulfilled' && allNodes.value.length > 0) {
+    const nodes = allNodes.value;
+    const byType = new Map<string, string[]>();
+
+    for (const node of nodes) {
+      const list = byType.get(node.type) ?? [];
+      list.push(`${node.name}: ${node.summary}`);
+      byType.set(node.type, list);
+    }
+
+    for (const [type, items] of byType) {
+      sections.push(`${type}:\n` + items.map(i => `- ${i}`).join('\n'));
+    }
   }
 
-  // Активные проекты
-  if (activeProjects.status === 'fulfilled' && activeProjects.value.length > 0) {
-    const lines = activeProjects.value.map(f => `- ${f.fact}`);
-    sections.push('Активные проекты:\n' + lines.join('\n'));
+  // Graph edges — recent facts
+  if (allEdges.status === 'fulfilled' && allEdges.value.length > 0) {
+    const nodes = allNodes.status === 'fulfilled' ? allNodes.value : [];
+    const facts = allEdges.value
+      .slice(-10)
+      .map(e => {
+        const src = nodes.find(n => n.uuid === e.sourceUuid)?.name ?? '?';
+        const tgt = nodes.find(n => n.uuid === e.targetUuid)?.name ?? '?';
+        return `${src} → ${tgt}: ${e.fact}`;
+      });
+    sections.push('Факты:\n' + facts.map(f => `- ${f}`).join('\n'));
   }
 
-  // Предпочтения
-  if (preferences.status === 'fulfilled' && preferences.value.length > 0) {
-    const lines = preferences.value.map(f => `- ${f.fact}`);
-    sections.push('Предпочтения:\n' + lines.join('\n'));
-  }
-
-  // Контекст последней сессии — что реально обсуждали
+  // Recent conversation topics
   if (recentMessages.status === 'fulfilled' && recentMessages.value.length > 0) {
-    const msgs = recentMessages.value;
-    // Берём последние user-сообщения как контекст
-    const userMsgs = msgs
+    const userMsgs = recentMessages.value
       .filter((m: any) => m.role === 'user')
       .slice(-5)
-      .map((m: any) => truncate(m.content, 100));
-
+      .map((m: any) => `- ${truncate(m.content, 100)}`);
     if (userMsgs.length > 0) {
-      sections.push('Последние темы:\n' + userMsgs.map(m => `- ${m}`).join('\n'));
+      sections.push('Последние темы:\n' + userMsgs.join('\n'));
     }
   }
 
@@ -75,9 +81,8 @@ export async function startup(params: StartupParams = {}): Promise<string> {
   return block;
 }
 
-/** Инвалидировать кэш (вызывается из remember, dreaming) */
-export async function invalidateStartupCache() {
-  await RedisService.del(CACHE_KEY);
+export async function invalidateStartupCache(userId = 'default') {
+  await RedisService.del(`judy:core_memory_block:${userId}`);
 }
 
 function truncate(text: string, maxChars: number): string {

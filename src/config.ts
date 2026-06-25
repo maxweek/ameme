@@ -16,9 +16,18 @@ export const CONFIG = {
   embedding: {
     url: process.env.EMBEDDING_URL || 'http://192.168.3.40:7997',
   },
+  reranker: {
+    url: process.env.RERANKER_URL || 'http://192.168.3.41:7998',
+  },
   graphiti: {
     mcpUrl: process.env.GRAPHITI_MCP_URL || 'http://192.168.3.40:8000/mcp/',
     groupId: process.env.GRAPHITI_GROUP_ID || 'judy',
+  },
+  falkordb: {
+    host: process.env.FALKORDB_HOST || '192.168.3.41',
+    port: parseInt(process.env.FALKORDB_PORT || '6380'),
+    password: process.env.FALKORDB_PASSWORD || '',
+    database: process.env.FALKORDB_DATABASE || 'ameme',
   },
   couchdb: {
     url: process.env.COUCHDB_URL || 'http://192.168.3.40:5984',
