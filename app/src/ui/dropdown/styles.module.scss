@@ -1,0 +1,152 @@
+@use "../../css/vars" as *;
+@use "../../css/typo" as *;
+@use "sass:color";
+
+.dropdown {
+  position: relative;
+  z-index: 10;
+
+  &:global(.__active) {
+    z-index: 20;
+
+    &>.dropdown__body {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+    &>.dropdown__header {
+      &>.dropdown__indicator {
+        transform: scaleY(-1);
+      }
+    }
+  }
+
+  &:global(.__align_left) {
+    &>.dropdown__body {
+      left: 0;
+    }
+  }
+
+  &:global(.__align_right) {
+    &>.dropdown__body {
+      left: auto;
+      right: 0;
+    }
+  }
+
+  &:global(.__align_center) {
+    &>.dropdown__body {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  &:global(.__valign_bottom) {
+    &>.dropdown__body {
+      top: auto;
+      bottom: calc(100% + 1rem);
+    }
+  }
+
+  &:global(.__disableMinWidth) {
+    &>.dropdown__body {
+      min-width: 0;
+    }
+  }
+
+  .dropdown__header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 0.5rem;
+    @include transition;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &:active {
+      opacity: 0.6;
+    }
+  }
+
+  .dropdown__indicator {
+    transition: .2s;
+  }
+
+  .dropdown__body {
+    position: absolute;
+    top: calc(100% + 1rem);
+    left: 0;
+    background-color: $color_bg;
+    border: 1px solid $color_border;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 1rem $color_shadow;
+    padding: 0.25rem;
+    min-width: 160px;
+    width: max-content;
+    max-width: 240px;
+    transition: .2s;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(1rem);
+    user-select: none;
+
+    hr {
+      outline: none;
+      border: none;
+      width: 100%;
+      height: 1px;
+      background-color: $color_border;
+      margin: 0.25rem 0;
+    }
+
+    :global(.actions) {
+      // gap: 0.25rem;
+      gap: 0;
+    }
+  }
+}
+
+.dropAction {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  // border-radius: 0.25rem;
+  color: $color_black;
+  -webkit-user-drag: none;
+  user-select: none;
+  color: $color_gray_dark;
+  @include transition;
+
+  &:first-of-type {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+  }
+
+  &:last-of-type {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+  }
+
+  &:hover {
+    background-color: $color_gray_light;
+  }
+
+  &:active {
+    background-color: $color_gray_darken;
+  }
+
+  &:global(.__disabled) {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  &:global(.__red) {
+    color: $color_red;
+  }
+}

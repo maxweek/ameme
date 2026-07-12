@@ -1,0 +1,151 @@
+@use "../../css/vars" as *;
+@use "../../css/typo" as *;
+
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: hidden;
+
+  &.__grow {
+    .tabs__head {
+      width: 100%;
+      // align-self: baseline;
+      .tabs__head_box {
+        width: 100%;
+        &>*{
+          flex-grow: 1;
+        }
+      }
+    }
+  }
+
+  &.__rawTab {
+    .tab {
+      padding: 0;
+      border: none;
+    }
+  }
+
+  &.__ellipsis {
+    &>.tabs__head {
+      .tabs__head_box {
+        flex-wrap: nowrap;
+      }
+
+      .tab__head {
+        overflow: hidden;
+        line-height: 1;
+
+        // padding: .5rem .25rem;
+        span {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: none;
+        }
+      }
+
+    }
+  }
+
+  .tab {
+    flex-grow: 1;
+    &.__padding {
+      padding: 0.5rem;
+      &>.tab__header:first-child {
+        margin-top: -0.5rem;
+      }
+    }
+  }
+
+  .tabs__head {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+
+    .tabs__head_box {
+      align-self: flex-start;
+      display: flex;
+      gap: 0.25rem;
+      padding: 0.25rem;
+      border: 1px solid $color_border;
+      border-radius: 0.5rem;
+      background-color: $color_white;
+      box-shadow: $shadow_module;
+      max-width: 100%;
+      flex-wrap: wrap;
+    }
+
+    span {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+    }
+  }
+
+  .tabs__body {
+    display: flex;
+    overflow: hidden;
+  }
+}
+
+.tab {
+  transition: .2s;
+  opacity: 0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid $color_border;
+
+  &.__active {
+    opacity: 1;
+  }
+
+  .tab__header {
+    @include s2();
+    color: $color_gray;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+    gap: 0.5rem;
+    &+.scroller {
+      margin-top: -1rem
+    }
+  }
+}
+
+.tab__head {
+  @include t1();
+  color: $color_gray;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+  @include transition();
+
+  &:hover {
+    background-color: $color_primary_hover;
+    color: $color_white_alw;
+  }
+
+  &:active {
+    background-color: $color_primary_active;
+  }
+
+  &.__active {
+    background-color: $color_primary;
+    color: $color_white_alw;
+  }
+
+  &.__disabled {
+    background-color: $color_gray_light;
+    color: $color_gray;
+  }
+}

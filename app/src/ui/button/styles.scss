@@ -1,0 +1,399 @@
+@use "../../css/vars" as *;
+@use "../../css/typo" as *;
+@use "sass:color";
+
+@mixin btnPaliter($color) {
+  background-color: #{$color};
+  color: $color_white_alw;
+
+  &:hover {
+    background-color: color.adjust($color, $lightness: 10%);
+  }
+
+  &.__pressed,
+  &:active {
+    background-color: color.adjust($color, $lightness: -10%);
+  }
+}
+
+.btn {
+  user-select: none;
+  cursor: pointer;
+  display: inline-flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background: none;
+  position: relative;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  @include t1();
+  min-height: 43px;
+  line-height: 1;
+  gap: 0.5rem;
+  @include transition();
+
+  &:before,
+  &:after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .1s;
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+    display: none;
+  }
+
+  &:before {
+    content: '';
+    background-color: $color_white_alpha;
+  }
+
+  &:after {
+    content: "";
+    background: url(/loader_white.svg) no-repeat center center;
+    width: 2rem;
+    height: 2rem;
+    z-index: 20;
+    background-size: contain;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+  }
+
+  &.__primary {
+    color: var(--colorPrimaryTextContrast, $color_white_alw);
+    background-color: $color_primary;
+
+    // &:focus,
+    &:hover {
+      background-color: $color_primary_hover;
+    }
+    
+    &.__pressed,
+    &:active {
+      background-color: $color_primary_active;
+    }
+
+    .icon svg * {
+      fill: currentColor
+    }
+  }
+
+  &.__secondary {
+    color: $color_black;
+    background-color: $color_gray_light;
+
+    // &:focus,
+    &:hover {
+      background-color: $color_gray_lighten;
+    }
+
+    &.__pressed,
+    &:active {
+      background-color: $color_gray_darken;
+    }
+  }
+
+  &.__tretiary {
+    color: $color_primary;
+
+    &:hover {
+      color: $color_primary_hover;
+    }
+
+    &.__pressed,
+    &:active {
+      color: $color_primary_active;
+    }
+  }
+
+  &.__simple {
+    color: $color_primary;
+    padding: 0;
+
+    &:hover {
+      color: $color_primary_hover;
+    }
+
+    &.__pressed,
+    &:active {
+      color: $color_primary_active;
+    }
+  }
+
+  &.__indicator {
+    background-color: transparent;
+    color: $color_black;
+
+    &:after {
+      background-image: url(/loader.svg);
+    }
+
+    &.__disabled {
+      background-color: transparent;
+    }
+
+    &.__loading {
+      background-color: $color_border;
+    }
+  }
+
+  &.__icon {
+    .icon {
+      margin-right: 0;
+    }
+  }
+
+  &.__asIcon {
+    padding: .5rem;
+    min-height: 32px;
+
+    svg * {
+      fill: $color_white;
+    }
+    &.__withKey {
+      .icon {
+        transform: translateY(-0.25rem);
+      }
+    }
+  }
+
+  &.__locked {
+    filter: grayscale(0.5);
+  }
+
+  &.__noMinWidth {
+    min-width: auto;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  &.__loading {
+    pointer-events: none;
+    color: transparent;
+
+    &:before,
+    &:after {
+      opacity: 1;
+      display: flex;
+    }
+  }
+
+  &.__fGrow {
+    flex-grow: 1;
+  }
+
+  &.__smallPadding {
+    padding: 0;
+    min-height: auto;
+  }
+
+  .icon {
+    display: flex;
+    // margin-right: 0.75rem;
+  }
+
+  &.__fill {
+    flex-grow: 1;
+  }
+
+  &.__disabled,
+  &.__noActions {
+    pointer-events: none;
+  }
+
+  &.__small {
+    padding: 0.25rem .5rem;
+    min-height: 24px;
+    &:after {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  &.__action {
+    padding: 0.25rem;
+    justify-content: flex-start;
+    padding-right: 0.75rem;
+    color: $color_black;
+    background-color: $color_gray_light;
+
+    // &:focus,
+    &:hover {
+      background-color: $color_gray_lighten;
+    }
+
+    &.__pressed,
+    &:active {
+      background-color: $color_gray_darken;
+    }
+  }
+
+  &.__disabled {
+    color: $color_gray;
+
+    &:not(.__tretiary) {
+      background-color: $color_disabled;
+    }
+
+    .btn {
+      color: $color_gray;
+      background-color: $color_disabled !important;
+    }
+  }
+
+  &:focus,
+  &:hover {
+    opacity: 1;
+  }
+
+
+  .btn__tip {
+    position: absolute;
+    @include t2;
+    color: $color_gray;
+    background-color: $color_white;
+    border: 1px solid $color_border;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    z-index: 10;
+    // opacity: 0;
+    // display: none;
+    pointer-events: none;
+
+    &.__topCenter {
+      bottom: calc(100% + 0.5rem);
+    }
+
+    &.__topLeft {
+      bottom: calc(100% + 0.5rem);
+      left: 0;
+
+      &:before {
+        left: 0.75rem;
+      }
+    }
+
+    &.__topRight {
+      bottom: calc(100% + 0.5rem);
+      right: 0;
+
+      &:before {
+        right: 0.75rem;
+        left: auto;
+      }
+    }
+
+    &.__left {
+      right: calc(100% + 0.5rem);
+
+      &:before {
+        left: calc(100% - 0.25rem);
+        top: calc(50% - 0.25rem);
+        transform: rotate(-135deg);
+      }
+    }
+
+    &.__right {
+      left: calc(100% + 0.5rem);
+
+      &:before {
+        right: calc(100% - 0.25rem);
+        left: auto;
+        top: calc(50% - 0.25rem);
+        transform: rotate(45deg);
+      }
+    }
+
+    &.__botCenter {
+      top: calc(100% + 0.5rem);
+
+      &:before {
+        bottom: calc(100% - 0.25rem);
+        top: auto;
+        transform: rotate(135deg);
+      }
+    }
+
+    &.__botLeft {
+      top: calc(100% + 0.5rem);
+      left: 0;
+
+      &:before {
+        bottom: calc(100% - 0.25rem);
+        top: auto;
+        transform: rotate(135deg);
+        left: 0.75rem;
+      }
+    }
+
+    &.__botRight {
+      top: calc(100% + 0.5rem);
+      right: 0;
+
+      &:before {
+        bottom: calc(100% - 0.25rem);
+        top: auto;
+        transform: rotate(135deg);
+        right: 0.75rem;
+        left: auto;
+      }
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      border-bottom: 1px solid $color_border;
+      border-left: 1px solid $color_border;
+      background-color: $color_white;
+      width: 0.5rem;
+      height: 0.5rem;
+      top: calc(100% - 0.25rem);
+      left: calc(50% - 0.25rem);
+      transform: rotate(-45deg);
+    }
+  }
+  .btn__key {
+    position: absolute;
+    font-size: 0.55rem;
+    bottom: 1px;
+    line-height: 1;
+    // right: 2px;
+    opacity: 0.5;
+  }
+}
+
+.btn {
+
+  &:not(.__disabled).__primary {
+    &.__blue {
+      @include btnPaliter($color_blue);
+    }
+
+    &.__yellow {
+      @include btnPaliter($color_yellow);
+    }
+
+    &.__red {
+      @include btnPaliter($color_red);
+    }
+
+    &.__green {
+      @include btnPaliter($color_green);
+    }
+
+    &.__purple {
+      @include btnPaliter($color_purple);
+    }
+  }
+}

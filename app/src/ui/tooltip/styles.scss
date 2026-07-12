@@ -1,0 +1,39 @@
+@use "../../css/vars" as *;
+@use "../../css/typo" as *;
+
+
+.tooltip {
+  position: fixed;
+  // pointer-events: none;
+  background-color: $color_bg;
+  border: 1px solid $color_border;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  min-width: 100px;
+  transform: translateY(0.5rem);
+  opacity: 0;
+  transition: opacity .2s, transform .2s;
+  z-index: 80;
+  box-shadow: $shadow_module;
+  &:not(.__noOffset){
+    &:before {
+      content: '';
+      position: absolute;
+      top: -0.5rem;
+      // background-color: red;
+      height: 0.5rem;
+      left: 0;
+      right: 0;
+    }
+  }
+  &.__active {
+    opacity: 1;
+    transform: none;
+  }
+  &:not(.__events) {
+    pointer-events: none;
+  }
+  &:not(.__active){
+    pointer-events: none;
+  }
+}

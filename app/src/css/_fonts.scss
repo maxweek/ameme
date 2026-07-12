@@ -1,0 +1,69 @@
+/* Manrope Extra Light */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200; /* Extra Light */
+  src: url('../fonts/Manrope-ExtraLight.ttf') format('truetype');
+}
+
+/* Manrope Light */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 300; /* Light */
+  src: url('../fonts/Manrope-Light.ttf') format('truetype');
+}
+
+/* Manrope Regular */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400; /* Regular */
+  src: url('../fonts/Manrope-Regular.ttf') format('truetype');
+}
+
+/* Manrope Medium */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500; /* Medium */
+  src: url('../fonts/Manrope-Medium.ttf') format('truetype');
+}
+
+/* Manrope SemiBold */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600; /* Semi Bold */
+  src: url('../fonts/Manrope-SemiBold.ttf') format('truetype');
+}
+
+/* Manrope Bold */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 700; /* Bold */
+  src: url('../fonts/Manrope-Bold.ttf') format('truetype');
+}
+
+/* Manrope Extra Bold */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 800; /* Extra Bold */
+  src: url('../fonts/Manrope-ExtraBold.ttf') format('truetype');
+}
+
+// @font-face {
+//   font-family: "Roboto";
+//   font-style: normal;
+//   font-weight: 600; 
+//   src: url("../fonts/RobotoFlex-Regular.ttf") format("truetype");
+// }
+
+@font-face {
+  font-family: "Rouble";
+  src: url("../fonts/rouble.otf") format("opentype");
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Inter:wght@100..900&display=swap');

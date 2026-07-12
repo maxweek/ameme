@@ -1,0 +1,169 @@
+@use "../../css/_vars.scss" as *;
+@use "../../css/_typo.scss" as *;
+
+.brain {
+  // background: $color_red;
+  position: relative;
+  min-height: calc(100dvh - $header_height);
+  width: 100%;
+
+  .brain__graph {
+    position: fixed;
+    top: $header_height;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+  }
+
+  .brain__ui {
+    z-index: 20;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+
+    .brain__bottom {
+      position: absolute;
+      bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      left: 0;
+      right: 0;
+
+      &>* {
+        pointer-events: all;
+      }
+    }
+
+    .brain__side {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      bottom: 1rem;
+      width: $sidebar_width;
+      border: 1px solid $color_border;
+      border-radius: 1rem;
+      background: $color_gray_lighten;
+      pointer-events: all;
+      transform: translate(calc(100% + 2rem));
+      transition: .4s ease-in-out;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+
+      &:global(.__active) {
+        transform: none;
+      }
+
+      .brain__side_inner {
+        flex-grow: 1;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .brain__side_head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        border-bottom: 1px solid $color_border;
+        padding: 1rem;
+      }
+
+      .brain__side_title {
+        @include h3;
+      }
+
+      .brain__side_close {
+        cursor: pointer;
+        @include transition;
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        &:active {
+          opacity: 0.5;
+        }
+      }
+
+      .brain__side_body {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        align-items: flex-start;
+        padding: 0 1rem 2rem;
+      }
+
+      .brain__side_scroller {
+        max-height: 100%;
+      }
+
+      .brain__node {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .brain__link {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+        border-top: 1px solid $color_border;
+        padding-top: 2rem;
+      }
+
+      .brain__info_type {
+        border: 1px solid $color_border;
+        background-color: $color_bg;
+        padding: .25rem .5rem;
+        border-radius: 0.5rem;
+        display: inline-flex;
+        margin-left: 0.5rem;
+        color: $color_black_alw;
+        @include t2;
+      }
+
+      .brain__info_text {
+        border: 1px solid $color_border;
+        background-color: $color_bg;
+        padding: .75rem;
+        border-radius: 0.5rem;
+        width: 100%;
+        @include t1;
+      }
+
+      .brain__linkBox {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+        padding-right: 0;
+        position: relative;
+        border-left: 1px solid $color_gray;
+        h2,h3 {
+          line-height: 1;
+        }
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: .75rem;
+          height: .75rem;
+          border-left: 1px solid $color_gray;
+          border-bottom: 1px solid $color_gray;
+          transform-origin: left bottom;
+          transform: rotate(-45deg);
+        }
+      }
+    }
+  }
+}

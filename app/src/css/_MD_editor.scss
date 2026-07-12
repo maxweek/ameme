@@ -1,0 +1,25 @@
+@use "./vars" as *;
+
+.w-md-editor-content.w-md-editor-content {
+  overflow: visible;
+}
+
+.w-md-editor-preview.w-md-editor-preview {
+  overflow: visible;
+  position: relative;
+  padding: 1.5rem;
+}
+
+.w-md-editor.w-md-editor {
+  background-color: $color_gray_lighten;
+  border: 1px solid $color_border;
+  border-radius: 1rem;
+}
+
+.wmde-markdown.wmde-markdown {
+  --color-border-muted: #{$color_border};
+  --color-border-default: #{$color_border};
+  background: none;
+  --color-canvas-default: #{$color_gray_lighten};
+  --color-canvas-subtle: #{$color_gray_lighten};
+}

@@ -1,0 +1,21 @@
+@use '../../css/vars' as *;
+@use '../../css/typo' as *;
+
+.emptyBox {
+  border-radius: 0.5rem;
+  border: 1px solid $color_border;
+  padding: 2rem;
+  text-align: center;
+  justify-content: center;
+  color: $color_gray;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  .emptyBox__title {
+    @include s1;
+    color: $color_gray;
+  }
+  .btn {
+    align-self: center;
+  }
+}

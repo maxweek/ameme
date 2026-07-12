@@ -1,0 +1,476 @@
+@use "../../css/vars" as *;
+@use "../../css/typo" as *;
+
+.table {
+  width: 100%;
+  // overflow: hidden;
+  // max-width: calc((100vw - 48px - 32px));
+  max-width: 100%;
+  // // @media(max-width: 1200px){
+  //     max-width: calc((100vw - 40px - 32px));
+  // }
+  -webkit-user-drag: none;
+  position: relative;
+
+  // @include scrollWithoutScrollHorizontal();
+  &+.table {
+    margin-top: 2rem;
+  }
+
+  &.__grab {
+    user-select: none;
+  }
+
+  &.__withLoad {
+    transition: .2s;
+
+    &:not(.__loaded) {
+      opacity: 0.6;
+      pointer-events: none;
+      @include maskLoading();
+      // animation: maskLoading 1s infinite ease-in-out;
+    }
+
+    &.__loaded {}
+  }
+
+
+  &.__filledHeader {
+    .table__header {
+      // position: sticky;
+      // z-index: 20;
+      // top: 0;
+    }
+  }
+
+  &.__withSide {
+    display: flex;
+    gap: 1rem;
+
+    .table__inner {
+      flex-grow: 1;
+      max-width: calc(100% - 140px - 1rem);
+    }
+  }
+
+  .table__side {
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+
+    .col {
+      align-items: center;
+    }
+  }
+
+  .table__header {
+    position: relative;
+    z-index: 20;
+    // transform-style: preserve-3d;
+    // will-change: transform;
+    transition: .2s ease-out;
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .scrollBox.scroller.table__scroller {
+    margin: 0 -1rem;
+    width: calc(100% + 2rem);
+    padding-bottom: 1rem;
+
+    .scroller__content {
+      min-width: 100%;
+      flex-direction: column;
+    }
+  }
+
+  .table__box {
+    min-width: 100%;
+    align-self: baseline;
+  }
+
+  table {
+    // overflow: hidden;
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid $color_border;
+    box-shadow: $shadow_module;
+    // border-collapse: collapse;
+    border-collapse: separate;
+    /* Разделение границ ячеек */
+    border-spacing: 0;
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .td__hidden th,
+  thead th,
+  tfoot th,
+  tbody td {
+    border-top: 1px solid $color_border;
+    // border-top: 0;
+    @include t2();
+    // font-weight: bold;
+    padding: 8px 4px;
+    min-height: 32px;
+    text-align: left;
+
+    &:first-child {
+      border-left: 0;
+      padding-left: 16px;
+
+      .col_h {
+        padding-left: 0;
+      }
+    }
+
+    &:last-child {
+      border-right: 0;
+      padding-right: 16px;
+
+      .col_h {
+        padding-right: 0;
+      }
+    }
+  }
+
+  thead th {
+    padding: 0 0;
+  }
+
+  .td__hidden,
+  thead,
+  tfoot {
+    th {
+      background: $color_white;
+      color: $color_text;
+      white-space: nowrap;
+
+      &:first-child {
+        border-top-left-radius: calc(0.5rem - 1px);
+        border-bottom-left-radius: calc(0.5rem - 1px);
+      }
+
+      &:last-child {
+        border-top-right-radius: calc(0.5rem - 1px);
+        border-bottom-right-radius: calc(0.5rem - 1px);
+      }
+    }
+  }
+
+  tbody {
+    tr {
+
+      &.__clickable {
+        cursor: pointer;
+
+        td {
+          transition: .2s;
+        }
+
+        &:hover {
+          td {
+            background-color: $color_gray_light;
+            transition: 0s;
+          }
+        }
+
+        &:active {
+          td {
+            background-color: $color_white_alpha;
+            transition: 0s;
+          }
+        }
+
+        td {
+          // background-color: red;
+        }
+      }
+
+      &.__fields {
+        td {
+          border-top: none;
+        }
+      }
+
+      // &:nth-first-child(2),
+      &:first-child {
+        td {
+          border-top: 0;
+        }
+      }
+
+      &:first-child {
+        td {
+          &:first-child {
+            border-top-left-radius: calc(0.5rem - 1px);
+          }
+
+          &:last-child {
+            border-top-right-radius: calc(0.5rem - 1px);
+          }
+        }
+      }
+
+      &:nth-last-child(-n + 2) {
+        td {
+          &:first-child {
+            border-bottom-left-radius: calc(0.5rem - 1px);
+          }
+
+          &:last-child {
+            border-bottom-right-radius: calc(0.5rem - 1px);
+          }
+        }
+      }
+    }
+
+    td {
+      background: $color_white;
+      color: $color_text;
+    }
+  }
+
+  thead:first-child {
+    th {
+      border-top: 0;
+    }
+  }
+  .td__hidden th,
+  thead th,
+  tbody td {
+    &.__center {
+
+      .col,
+      .col_h {
+        justify-content: flex-start;
+      }
+    }
+
+    &.__center {
+
+      .col,
+      .col_h {
+        justify-content: center;
+      }
+    }
+
+    &.__right {
+
+      .col,
+      .col_h {
+        justify-content: flex-end;
+      }
+    }
+
+    &.__cbx {
+      padding: 0;
+      position: relative;
+      min-height: 1.5rem;
+      min-width: 3rem;
+      max-width: 3rem;
+      width: 3rem;
+      .col_h,
+      .col {
+        padding: 0;
+        height: auto;
+        // background-color: red;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        // align-items: center;
+        // justify-content: center;
+        .input.__checkbox.__cbx {
+          width: 100%;
+          display: flex;
+          .input__box {
+            width: 100%;
+            justify-content: center;
+            background: none;
+            border-radius: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .col_h {
+    display: flex;
+    justify-content: flex-start;
+    user-select: none;
+    padding: 8px 4px;
+
+    position: relative;
+
+    &:hover {
+      .col_h_drop {
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    &.__clickable {
+      cursor: pointer;
+
+
+      &:hover {
+        .col_h_inner:before {
+          background-color: $color_gray_light;
+          transition: 0s;
+        }
+      }
+
+      &:active {
+        .col_h_inner:before {
+          background-color: $color_white_alpha;
+          transition: 0s;
+        }
+      }
+    }
+
+    .col_h_inner {
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+
+      &:before {
+        content: '';
+
+        border-radius: 4px;
+        left: -6px;
+        right: -6px;
+        top: -4px;
+        bottom: -4px;
+        pointer-events: none;
+        transition: .2s;
+        position: absolute;
+        z-index: -1;
+      }
+    }
+
+    // .col_h_drop {
+    //   position: absolute;
+    //   pointer-events: none;
+    //   background-color: $color_bg;
+    //   border: 1px solid $color_border;
+    //   border-radius: 0.5rem;
+    //   top: calc(100%);
+    //   left: -0.25rem;
+    //   padding: 0.5rem;
+    //   min-width: 100px;
+    //   transform: translateY(0.5rem);
+    //   opacity: 0;
+    //   transition: .2s;
+    // }
+  }
+
+  .col {
+    display: flex;
+    justify-content: flex-start;
+
+    img {
+      width: 3rem;
+      height: 3rem;
+      object-fit: cover;
+      border-radius: 0.5rem;
+    }
+  }
+
+  .td__hidden {
+    // height: 0;
+    // overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+
+    th {
+      padding-top: 0;
+      padding-bottom: 0;
+      // font-size: 0;
+      line-height: 0;
+      border-top: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .input,
+    .col_h {
+      padding-top: 0;
+      padding-bottom: 0;
+      height: 0;
+    }
+  }
+
+  .input.__cbx {
+    // margin-right: 0.5rem;
+  }
+
+  ._clrBox {
+    min-width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid $color_border;
+    margin-right: 0.25rem;
+  }
+
+  ._fields_col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  ._fields_row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    ._fields_row_title {
+      @include t2;
+      color: $color_gray;
+    }
+
+    ._fields_row_list {
+      row-gap: 0.25rem;
+    }
+  }
+}
+
+.table__loadMask {
+  .table__head {
+    min-height: 2rem;
+    @include loadMask();
+  }
+
+  .table__body {
+    margin-top: 1rem;
+    @include loadMask();
+  }
+
+  .table__row {
+    padding: 0.5rem;
+    border-bottom: 1px solid $color_gray_light;
+    display: flex;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+  }
+
+  .table__cell {
+    width: 30%;
+    height: 1.5rem;
+    @include loadMask();
+
+    &:not(:first-child) {
+      margin-left: 0.5rem;
+    }
+  }
+}

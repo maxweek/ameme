@@ -1,0 +1,240 @@
+@mixin lightMode() {
+  --color_white: #fff;
+  --color_black: #323232;
+  --color_bg: #ededed;
+
+  --color_gray_lighten: #c5c5c5;
+  --color_gray_light: #adadad;
+  --color_gray: #828282;
+  --color_gray_dark: #5d5d5d;
+  --color_gray_darken: #343434;
+
+  --color_gray_alpha: #ababab57;
+  --color_text_primary: #0f2744;
+  --color_text_secondary: #728095;
+
+  --color_border_lighten: #eaeef3;
+  --color_border: #e6eaee;
+  --color_border_darken: #dde2e6;
+
+  --color_disabled: #ececec;
+  --color_shadow: #c9cccf;
+  --color_inputBg: #fcfcfc;
+  --color_text: #6f6f6f;
+  --color_white_aplha: #ffffff76;
+  --color_white_aplha_almost: #ffffffe5;
+}
+
+@mixin darkMode() {
+  --color_white: #323232;
+  --color_black: #e0e4eb;
+  --color_bg: #222222;
+
+  --color_gray_lighten: #343434;
+  --color_gray_light: #5d5d5d;
+  --color_gray: #828282;
+  --color_gray_dark: #adadad;
+  --color_gray_darken: #c5c5c5;
+
+  --color_disabled: #383838;
+  --color_gray_alpha: #65656544;
+  --color_border_lighten: #4e505384;
+  --color_border: #414244;
+  --color_border_darken: #585a5d84;
+  --color_shadow: #1e1e1e;
+  --color_inputBg: #2d2d2d;
+  --color_white_aplha: #31313176;
+  --color_white_aplha_almost: #262626cf;
+  --color_text: #c2c2c2;
+}
+
+
+$color_white_alw: var(--color_white_always);
+$color_black_alw: var(--color_black_always);
+$color_white: var(--color_white);
+$color_white_alpha: var(--color_white_aplha);
+$color_white_alpha_almost: var(--color_white_aplha_almost);
+$color_gray_lighten: var(--color_gray_lighten);
+$color_gray: var(--color_gray);
+$color_gray_alpha: var(--color_gray_alpha);
+$color_gray_darken: var(--color_gray_darken);
+$color_gray_dark: var(--color_gray_dark);
+$color_gray_light: var(--color_gray_light);
+$color_black: var(--color_black);
+
+$color_blue: #2773ff;
+$color_disabled: var(--color_disabled);
+
+$color_red: #ff5e19;
+$color_green: #95bd11;
+$color_purple: #b727ff;
+$color_yellow: #ff9e27;
+
+$color_pink: #ff278c;
+$color_lazure: #27f8ff;
+
+$color_text_secondary: var(--color_text_secondary);
+$color_bg: var(--color_bg);
+$color_input_bg: var(--color_inputBg);
+$color_text: var(--color_text);
+
+$color_border_lighten: var(--color_border_lighten);
+$color_border: var(--color_border);
+$color_border_darken: var(--color_border_darken);
+$color_shadow: var(--color_shadow);
+
+// $color_primary: $color_blue;
+$color_primary: var(--colorPrimary);
+$color_primary_hover: color-mix(in srgb, var(--colorPrimary) 90%, white);
+$color_primary_active: color-mix(in srgb, var(--colorPrimary) 90%, black);
+
+$color_primary_selection: color-mix(in srgb, var(--colorPrimary), transparent 80% );
+
+// $color_border: $color_primary;
+
+$color_selection_text: white;
+$color_selection_bg: $color_primary;
+
+$color_placeholder: $color_gray;
+
+$shadow_module: 0 4px 16px -8px $color_shadow;
+
+$header_height: 64px;
+$header_height_mob: 50px;
+
+$container_width: 1640px;
+$sidebar_width: 320px;
+
+$adBar_height: 6rem;
+
+$desk: 1200px;
+$tablet: 820px;
+$tablet_min: 821px;
+$mobile: 495px;
+$mobile_min: 496px;
+
+$font: "Inter", "system-ui", sans-serif;
+$fontAlt: "Manrope", "system-ui", sans-serif;
+
+@mixin scrollWithoutScroll() {
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+}
+
+@mixin scrollWithoutScrollHorizontal() {
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+  scrollbar-height: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    height: 0px;
+    background: transparent;
+  }
+}
+
+@mixin transition() {
+  & {
+    transition: 0.2s;
+  }
+
+  &:hover {
+    // transition: 0.05s;
+    transition: 0s;
+  }
+
+  &:active {
+    // transition: 0.02s;
+    transition: 0s;
+  }
+}
+
+@mixin sideFaders($width: 12px, $color: $color_white, $inset: 0%) {
+
+  &:before,
+  &:after {
+    content: "";
+    display: block;
+    top: 0;
+    bottom: 0;
+    width: $width;
+    position: absolute;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  &:before {
+    left: 0;
+    background: linear-gradient(to right, $color $inset, transparentize($color, 1));
+  }
+
+  &:after {
+    right: 0;
+    background: linear-gradient(to left, $color $inset, transparentize($color, 1));
+  }
+}
+
+@mixin actions($margin: 4px) {
+  margin: -$margin;
+
+  &>* {
+    margin: $margin;
+  }
+}
+
+@mixin loadMask($dur: 1s, $delay: 0s, $opacity: 1, $br: 0.5rem) {
+  opacity: $opacity;
+  border-radius: $br;
+  overflow: hidden;
+  position: relative;
+
+  &:after {
+    $halfGr: $color_gray_alpha;
+    content: "";
+    background: linear-gradient(to right, $halfGr calc(100% / 3), transparent, $halfGr calc(100% / 3 * 2));
+    animation: loadMaskAnim #{$dur} #{$delay} infinite ease-in-out reverse;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 300%;
+    pointer-events: none;
+  }
+}
+
+@keyframes loadMaskAnim {
+  0% {
+    translate: 0 0;
+  }
+
+  100% {
+    translate: calc(100% / -3 * 2) 0;
+  }
+}
+
+
+
+@mixin maskLoading {
+  mask-image: linear-gradient(to right, black 30%, transparent , black 70%);
+  mask-position: 150%;
+  transition: .2s;
+  mask-size: 200%;
+  opacity: 0.6;
+  animation: maskLoad 1.4s infinite
+}
+
+@keyframes maskLoad {
+  0% {
+    mask-position: -50%;
+  }
+
+  100% {
+    mask-position: -250%;
+  }
+}

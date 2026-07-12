@@ -1,0 +1,64 @@
+@use "../../css/vars" as *;
+@use "../../css/typo" as *;
+@use "sass:color";
+
+
+.icon {
+  min-width: 1em;
+  min-height: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.__err {
+    width: 14px;
+    height: 14px;
+    // border: 1px solid white;
+    box-shadow: 0 0 4px red;
+    border-radius: 64px;
+    color: red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:before {
+      content: '!';
+      font-size: 12px;
+      position: absolute;
+    }
+  }
+  &.__clickable {
+    cursor: pointer;
+    @include transition;
+    &:hover {
+      opacity: 0.8;
+    }
+    &:active {
+      opacity: 0.6;
+    }
+  }
+  &.__color {
+    &_green {
+      color: $color_green;
+    }
+    &_red {
+      color: $color_red;
+    }
+    &_gray {
+      color: $color_gray;
+    }
+    &_yellow {
+      color: $color_yellow;
+    }
+    &_blue {
+      color: $color_blue;
+    }
+    &_black {
+      color: $color_black;
+    }
+    &_white {
+      color: $color_white;
+    }
+
+  }
+}

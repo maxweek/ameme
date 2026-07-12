@@ -1,0 +1,148 @@
+@use "../../css/_vars.scss" as *;
+@use "../../css/_typo.scss" as *;
+
+
+.dreamings {
+  position: relative;
+
+  .dreamings__shader {
+    position: fixed;
+    top: $header_height;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+}
+
+.dreamBox {
+  position: relative;
+  z-index: 20;
+
+  // background: repeating-linear-gradient(black, white 5px);
+
+  .dreamBox__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .dreamBox__main {
+    width: 100%;
+    margin-top: 35dvh;
+    min-height: 45dvh;
+    // background: red;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5rem;
+    &:global(.__complete),
+    &:global(.__idle){
+      .dreamBox__btn_prog{
+        opacity: 0;
+      }
+    }
+  }
+
+  .dreamBox__btn {
+    border-radius: 100rem;
+    // background: red;
+    height: 10rem;
+    width: 10rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(1rem);
+    border: 1px dashed $color_border;
+    cursor: pointer;
+    transition: .2s;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
+    position: relative;
+
+    &:hover {
+      box-shadow: 0 0 1rem 1rem rgba(0, 0, 0, 0.2);
+
+      .dreamBox__btn_inner {
+        filter: blur(.1rem)
+      }
+    }
+
+    .dreamBox__btn_prog {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      transition: .4s;
+
+      transform: rotate(90deg);
+
+      circle {
+        transition: .4s cubic-bezier(0, 1, 0, 1);
+      }
+    }
+
+    .dreamBox__btn_inner {
+      @include h4;
+      text-transform: uppercase;
+      line-height: 1;
+      transition: .2s;
+
+      &:global(.__changing){
+        filter: blur(1rem)
+      }
+    }
+  }
+
+  .dreamBox__main_list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+    position: relative;
+    width: 50%;
+    min-width: 375px;
+    max-width: 640px;
+    min-height: 400px;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: -2rem;
+      left: -2rem;
+      right: -2rem;
+      bottom: -2rem;
+      z-index: -1;
+      backdrop-filter: blur(40px);
+      background: rgba(35, 35, 35, 0.066);
+      mask-image: radial-gradient(ellipse closest-side at center center, black 80%, transparent 100%);
+
+    }
+
+    .dreamBox__main_item {
+      @include t1;
+      font-weight: 500;
+      animation: dreamItemFadeIn 1.5s forwards cubic-bezier(0, 1, 1, 1)
+    }
+  }
+
+  .dreamBox__list {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+}
+
+@keyframes dreamItemFadeIn {
+  0%{
+    transform: translateY(30rem);
+    filter: blur(20rem);
+  }
+  100%{
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}

@@ -1,0 +1,57 @@
+@use "../../css/vars" as *;
+@use "../../css/typo" as *;
+@use "sass:color";
+
+
+.selector {
+  display: flex;
+  padding: .25rem;
+  border: 1px solid $color_border;
+  border-radius: 0.5rem;
+  backdrop-filter: blur(10px);
+  background-color: $color_white_alpha_almost;
+  user-select: none;
+
+  .selector__box {
+    display: flex;
+    position: relative;
+  }
+
+  .selector__item {
+    padding: .5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: .25rem;
+    @include t1;
+    cursor: pointer;
+    color: $color_black;
+    line-height: 1;
+    @include transition;
+
+    &:hover {
+      opacity: .8;
+    }
+
+    &:active {
+      opacity: .6;
+    }
+
+    &:global(.__active) {
+      color: $color_white_alw;
+      opacity: 1;
+    }
+
+    &:global(.__disabled) {
+      cursor: default;
+      opacity: .5;
+    }
+  }
+
+  .selector__active {
+    position: absolute;
+    background-color: $color_primary;
+    border-radius: .2rem;
+    z-index: -1;
+    transition: .2s cubic-bezier(0, 1, 0, 1);
+  }
+}

@@ -1,0 +1,215 @@
+@use "../../css/vars" as *;
+@use "../../css/typo" as *;
+
+.modal {
+  position: fixed;
+  z-index: 80;
+  top: 0;
+  // left: $sidebar_width;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  margin: 0 !important;
+
+  &.__global {
+    top: 0;
+    left: 0;
+  }
+
+  &.__wide {
+    .modal__inner {
+      width: 100%;
+    }
+  }
+
+  &.__fill {
+    .modal__inner {
+      width: calc(100% - 2rem);
+      height: calc(100% - 2rem);
+      display: flex;
+      flex-direction: column;
+    }
+    .modal__box {
+      overflow: hidden;
+      flex-grow: 1;
+    }
+  }
+
+  &.__withOffset {
+    // bottom: $adBar_height;
+  }
+
+  &.__disableScroll {
+    .modal__inner {
+      max-width: calc(100vw - 2rem);
+      max-height: calc(100svh - 2rem);
+      max-height: calc(100dvh - 2rem);
+    }
+    .modal__box {
+      overflow: hidden;
+    }
+  }
+
+  &.__side {
+    right: 55vw;
+    max-width: 600px;
+    min-width: 480px;
+
+    .modal__shadow {
+      background: none;
+      backdrop-filter: none;
+    }
+
+    .modal__inner {
+      width: 100%;
+    }
+    .modal__box{
+      flex-grow: 1;
+    }
+  }
+
+  &.__noPadding {
+    .modal__inner {
+      padding: 0;
+    }
+
+    .modal__close {
+      top: -2rem;
+      right: -2rem;
+    }
+  }
+
+  &.__small {
+    .modal__inner {
+      width: 440px;
+    }
+  }
+
+  &.__active {
+    pointer-events: all;
+
+    .modal__shadow {
+      opacity: 1;
+    }
+
+    .modal__inner {
+      opacity: 1;
+      transform: none;
+      pointer-events: all;
+    }
+  }
+
+  &.__scroll {
+    // .modal__scroller {
+    //   @include scrollWithoutScroll();
+    //   mask-image: linear-gradient(to bottom, transparent, black 1rem, black calc(100% - 1rem), transparent);
+    //   max-height: 100%;
+    //   padding: 1rem 0;
+    // }
+  }
+
+  .modal__shadow {
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $color_white_alpha;
+    backdrop-filter: blur(10px);
+    transition: 0.4s;
+  }
+
+  .modal__close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+      transform: rotate(90deg);
+    }
+
+    .icon {
+      font-size: 1.5rem;
+    }
+  }
+
+  .modal__inner {
+    position: relative;
+    padding: 2rem 2rem 2rem;
+    border: 1px solid $color_border;
+    box-shadow: $shadow_module;
+    border-radius: 1rem;
+    width: 50vw;
+    // max-width: calc(100% - 2rem);
+    max-width: 100%;
+    min-width: 320px;
+    transition: all 0.4s, width 0s;
+    opacity: 0;
+    transform: scale(0.5);
+    // display: flex;
+    background-color: $color_white;
+    // flex-direction: column;
+    margin: auto;
+    // pointer-events: all;
+  }
+
+  .modal__box {
+    // margin: 0 -1rem -1rem;
+    // width: calc(100% + 2rem);
+    // overflow: hidden;
+    display: flex;
+    padding: 0 1rem;
+    margin: 0 -1rem;
+  }
+
+  .modal__scroller {
+    max-height: calc(100% - 1rem);
+    min-height: calc(100% - 1rem);
+    pointer-events: none;
+
+    &>.scrollBox__content {
+      padding: 6rem 1rem !important;
+      // justify-content: center;
+    }
+  }
+
+
+  .modal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+
+    &>.page {
+      padding: 0;
+      // min-height: calc(100dvh - 12rem);
+      min-height: unset;
+
+      .blurEffect {
+        display: none
+      }
+    }
+  }
+
+  .modal__title {
+    @include h3();
+    margin-bottom: 1rem;
+    display: flex;
+    color: $color_black;
+
+    .modal__subtitle {
+      @include t2;
+      margin-left: 1rem;
+      align-self: flex-end;
+      padding-bottom: 0.2rem;
+      color: $color_gray;
+    }
+  }
+}

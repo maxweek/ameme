@@ -1,0 +1,62 @@
+@use "../../css/vars" as *;
+@use "../../css/typo" as *;
+
+
+.scrollBox.scroller {
+
+  width: 100%;
+  max-height: 100%;
+
+  user-select: auto;
+
+  &.__barAlt {
+    &>.scrollBox__bar {
+      &:before {
+        background: linear-gradient(to right, $color_bg, transparent);
+      }
+    }
+  }
+
+  &.__horizontal {
+    &>.scrollBox__bar {
+      &:before {
+        background: linear-gradient(to top, $color_bg, transparent);
+      }
+    }
+
+    &.__barAlt {
+      &>.scrollBox__bar {
+        &:before {
+          background: linear-gradient(to bottom, $color_bg, transparent);
+        }
+      }
+    }
+  }
+
+  &.__vertical {
+
+
+    &>.scrollBox__bar {
+      background-color: $color_bg;
+      // background: none;
+      right: 0.125rem;
+
+      &:before {
+        background: linear-gradient(to left, $color_bg, transparent);
+      }
+    }
+  }
+
+  &.__vertical,
+  &.__horizontal {
+    &>.scrollBox__bar {
+      &>.scrollBox__roller {
+        background-color: $color_primary;
+      }
+    }
+  }
+
+  .scroller__content {
+    // mask-image: none !important;
+  }
+}

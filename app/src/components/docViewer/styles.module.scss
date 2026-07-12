@@ -1,0 +1,148 @@
+@use "../../css/_vars.scss" as *;
+@use "../../css/_typo.scss" as *;
+
+.docViewer {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+
+  &:global(.__loading) {
+    @include maskLoading;
+  }
+
+  .docViewer__side {
+    display: flex;
+    background: $color_gray_lighten;
+    border: 1px solid $color_border;
+    border-radius: 1rem;
+    position: sticky;
+    top: calc(#{$header_height} + 1rem);
+    min-width: $sidebar_width;
+    max-width: $sidebar_width;
+
+    .docViewer__scroller {
+      max-height: calc(100dvh - #{$header_height} - 3rem);
+    }
+  }
+
+  .docViewer__list {
+    display: flex;
+    flex-direction: column;
+    padding: 0 .5rem;
+    user-select: none;
+  }
+
+  .docViewer__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    &:global(.__active) {
+      &>.docViewer__item_head {
+        background-color: $color_gray_light;
+      }
+    }
+
+    &:global(.__opened) {
+      &>.docViewer__item_head {
+        &>.docViewer__item_indi {
+          transform: rotate(90deg);
+        }
+      }
+    }
+
+    &:global(.__folder) {}
+
+    .docViewer__item_head {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.5rem 0.5rem;
+      cursor: pointer;
+      border-radius: 0.5rem;
+      @include transition;
+      @include t2;
+      line-height: 1;
+
+      &:hover {
+        background-color: $color_gray_light;
+      }
+
+      &:active {
+        background-color: $color_gray;
+      }
+
+      .docViewer__item_indi {
+        transition: .2s ease-in-out;
+      }
+
+      .docViewer__item_count {
+        opacity: 0.5;
+      }
+    }
+
+    .docViewer__item_list {
+      border-left: 1px solid $color_border;
+      padding-left: .75rem;
+    }
+  }
+
+  .docViewer__body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-width: 100%;
+    .docViewer__side + & {
+      max-width: calc(100% - $sidebar_width - 2rem);
+    }
+  }
+
+  .docViewer__doc {
+    display: flex;
+    flex-direction: column;
+
+    &:global(.__loading) {
+      @include maskLoading;
+    }
+  }
+
+  .docViewer__bradcrumbs {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    opacity: .5;
+
+    .docViewer__bradcrumbs_item {
+      &:not(:first-child) {
+        &:before {
+          content: "/";
+          margin-right: .5rem;
+        }
+      }
+    }
+  }
+
+  .docViewer__graph {
+    width: 100%;
+    min-height: calc(100dvh - $header_height - 11rem);
+    overflow: hidden;
+    border: 1px solid $color_border;
+    border-radius: 1rem;
+    display: flex;
+
+    &:global(.__loading) {
+      @include maskLoading;
+    }
+
+    :global(.force-graph-container) {
+      width: 100%;
+      height: 100%;
+
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}

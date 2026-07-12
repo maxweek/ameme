@@ -1,0 +1,68 @@
+@use "../../css/_vars.scss" as *;
+@use "../../css/_typo.scss" as *;
+
+.header {
+  // background: $color_red;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $header_height;
+  background-color: $color_bg;
+  border-bottom: 1px solid $color_border;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+
+
+  .header__inner {
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    align-self: center;
+    max-width: 1600px;
+    width: 100%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .header__col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .header__row {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .header__logo {
+    @include h3;
+    font-weight: 900;
+  }
+
+  .header__navList {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .header__navBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    @include t2;
+    color: $color_gray_dark;
+    text-transform: uppercase;
+    line-height: 1;
+    font-weight: 600;
+
+    &:global(.__active) {
+      color: $color_primary;
+    }
+  }
+}
